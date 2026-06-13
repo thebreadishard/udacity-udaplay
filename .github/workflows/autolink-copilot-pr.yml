@@ -1,0 +1,130 @@
+name: Auto-Link Copilot PR To Issue
+
+# Copilot's cloud agent frequently drops the `Closes #N` line when it
+# regenerates the PR body, which breaks the required `check-linked-issue`
+# gate. This workflow recovers the issue number from a signal that survives
+# the body rewrite -- the issue's *assignee* -- and injects a standalone
+# `Closes #N` line using GITHUB_TOKEN (a bot), so the link is established
+# without a human edit (which would disqualify the reviewer's approval).
+#
+# Why assignee and not linkedBranches/branch-name:
+#   * This repo's Copilot issues never populate GraphQL `linkedBranches`
+#     (verified: no issue, open or closed, has a Development link).
+#   * Copilot's `copilot/<slug>` branch is a lossy abbreviation of the
+#     issue title (e.g. "Load environment variables in Part 02 notebook"
+#     -> branch `copilot/load-env-variables-part-02`), so slug matching is
+#     unreliable.
+#   * When Copilot works an issue it is added as an assignee, and that
+#     assignment persists -- a deterministic signal under a one-issue-at-a-
+#     time workflow.
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, ready_for_review, synchronize]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+
+jobs:
+  autolink:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ensure closing reference on Copilot PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const headRef = pr.head.ref;
+            const author = (pr.user && pr.user.login) || "";
+
+            // Only act on Copilot-authored PRs to avoid touching human PRs.
+            const isCopilot =
+              author === "copilot-swe-agent" ||
+              author === "app/copilot-swe-agent" ||
+              author === "Copilot" ||
+              headRef.startsWith("copilot/");
+            if (!isCopilot) {
+              core.info(`PR #${pr.number} is not a Copilot PR (author: ${author}, branch: ${headRef}). Skipping.`);
+              return;
+            }
+
+            const body = pr.body || "";
+            const closingLineRe = /^\s*(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\s*$/i;
+
+            // Idempotency: if a standalone closing reference already exists, stop.
+            // (Our own update fires `edited`; this guard prevents a loop.)
+            const existing = body
+              .split(/\r?\n/)
+              .map((line) => line.match(closingLineRe))
+              .find(Boolean);
+            if (existing) {
+              core.info(`PR #${pr.number} already closes #${existing[1]}. Nothing to do.`);
+              return;
+            }
+
+            // The durable signal: open issues assigned to the Copilot bot.
+            const data = await github.graphql(
+              `query($owner:String!,$repo:String!){
+                 repository(owner:$owner,name:$repo){
+                   issues(first:100, states:OPEN, orderBy:{field:UPDATED_AT, direction:DESC}){
+                     nodes{
+                       number
+                       assignees(first:10){ nodes{ login } }
+                     }
+                   }
+                 }
+               }`,
+              { owner, repo }
+            );
+
+            const copilotLogins = new Set(["Copilot", "copilot-swe-agent"]);
+            const copilotIssues = data.repository.issues.nodes.filter((issue) =>
+              issue.assignees.nodes.some((a) => copilotLogins.has(a.login))
+            );
+
+            if (copilotIssues.length === 0) {
+              core.warning(
+                `No open issue is assigned to Copilot; cannot resolve a target for PR #${pr.number}. Leaving body unchanged.`
+              );
+              return;
+            }
+
+            let target;
+            if (copilotIssues.length === 1) {
+              // One-at-a-time workflow: unambiguous.
+              target = copilotIssues[0];
+            } else {
+              // Disambiguate by an issue number mentioned anywhere in the body.
+              const mentioned = new Set(
+                (body.match(/#(\d+)/g) || []).map((m) => Number(m.slice(1)))
+              );
+              const narrowed = copilotIssues.filter((issue) => mentioned.has(issue.number));
+              if (narrowed.length === 1) {
+                target = narrowed[0];
+              } else {
+                core.warning(
+                  `${copilotIssues.length} open issues are assigned to Copilot ` +
+                    `(${copilotIssues.map((i) => "#" + i.number).join(", ")}) and the PR body ` +
+                    `does not disambiguate. Refusing to guess for PR #${pr.number}.`
+                );
+                return;
+              }
+            }
+
+            const issueNumber = target.number;
+            const trimmed = body.replace(/\s+$/, "");
+            const newBody = `${trimmed}${trimmed ? "\n\n" : ""}Closes #${issueNumber}\n`;
+
+            await github.rest.pulls.update({
+              owner,
+              repo,
+              pull_number: pr.number,
+              body: newBody,
+            });
+
+            core.info(`Injected "Closes #${issueNumber}" into PR #${pr.number}.`);

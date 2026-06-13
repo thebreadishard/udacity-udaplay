@@ -3,7 +3,7 @@
 
 ## Linked Issue
 
-Closes #
+Replace this line with `Closes #ISSUE_NUMBER` before requesting review.
 
 ## Changes
 
@@ -17,7 +17,7 @@ Closes #
 
 ## Review Checklist
 
-- [ ] PR links its issue using `Closes #N`, `Fixes #N`, or `Resolves #N`.
+- [ ] PR description includes an explicit closing reference such as `Closes #19`.
 - [ ] PR labels match the source issue where applicable.
 - [ ] Scope is limited to the linked issue.
 - [ ] `.env`, `.venv/`, `chromadb/`, API keys, and other local artifacts are not committed.

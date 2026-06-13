@@ -58,6 +58,18 @@ body:
       required: true
 
   - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of Scope
+      description: Adjacent work that should not be changed in this PR, even if it appears nearby.
+      placeholder: |
+        - Do not implement the next TODO cell.
+        - Do not modify unrelated notebook sections.
+        - Do not change workflow files to satisfy PR checks.
+    validations:
+      required: true
+
+  - type: textarea
     id: acceptance-criteria
     attributes:
       label: Acceptance Criteria
@@ -84,7 +96,8 @@ body:
     attributes:
       label: PR Requirements
       value: |
-        - Open a pull request that includes `Closes #ISSUE_NUMBER` in the PR description.
+        - Open a pull request that includes a real closing reference in the PR description, for example `Closes #123`.
+        - Do not leave the PR template placeholder unchanged.
         - Keep the PR narrowly scoped to this issue.
         - Apply the same labels to the PR where possible.
         - Do not commit `.env`, `.venv/`, `chromadb/`, API keys, or notebook outputs unless intentionally required for review.

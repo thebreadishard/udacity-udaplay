@@ -26,8 +26,8 @@ UdaPlay combines local retrieval, web search, and answer evaluation:
 .
 ├── games/                         # Local JSON game records
 ├── lib/                           # Agent, RAG, memory, LLM, parser, and tool helpers
-├── Udaplay_01_starter_project.ipynb
-├── Udaplay_02_starter_project.ipynb
+├── Udaplay_01_solution_project.ipynb
+├── Udaplay_02_solution_project.ipynb
 ├── requirements.txt
 ├── .env.example
 └── README.md
@@ -35,8 +35,8 @@ UdaPlay combines local retrieval, web search, and answer evaluation:
 
 The notebooks are the main application workflow:
 
-- `Udaplay_01_starter_project.ipynb` builds the local ChromaDB-backed game knowledge base.
-- `Udaplay_02_starter_project.ipynb` builds the research agent that retrieves, evaluates, searches the web, and answers questions.
+- `Udaplay_01_solution_project.ipynb` builds the local ChromaDB-backed game knowledge base.
+- `Udaplay_02_solution_project.ipynb` builds the research agent that retrieves, evaluates, searches the web, and answers questions.
 
 ## Setup
 
@@ -62,8 +62,8 @@ The real `.env` file is ignored by Git so API keys stay local.
 
 Open the notebooks in order and run them from the repository root:
 
-1. Run `Udaplay_01_starter_project.ipynb` to load the game JSON files into a local vector database.
-2. Run `Udaplay_02_starter_project.ipynb` to configure the research agent and its tools.
+1. Run `Udaplay_01_solution_project.ipynb` to load the game JSON files into a local vector database.
+2. Run `Udaplay_02_solution_project.ipynb` to configure the research agent and its tools.
 3. Ask game-industry questions in natural language.
 
 Good starter questions include:

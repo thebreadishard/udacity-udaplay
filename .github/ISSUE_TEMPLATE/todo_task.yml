@@ -33,7 +33,7 @@ body:
       label: Files
       description: List the files expected to change.
       placeholder: |
-        - Udaplay_01_starter_project.ipynb
+        - Udaplay_01_solution_project.ipynb
         - .env.example only if needed
     validations:
       required: true

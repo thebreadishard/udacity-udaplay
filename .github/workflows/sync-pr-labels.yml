@@ -6,7 +6,7 @@ on:
 
 permissions:
   issues: write
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   sync-labels:
@@ -36,12 +36,13 @@ jobs:
               issue_number: issueNumber,
             });
 
+            const issueOnlyLabels = new Set(["agent-ready", "blocked"]);
             const labels = issue.labels
               .map((label) => (typeof label === "string" ? label : label.name))
-              .filter(Boolean);
+              .filter((label) => label && !issueOnlyLabels.has(label));
 
             if (labels.length === 0) {
-              core.info(`Issue #${issueNumber} has no labels to copy.`);
+              core.info(`Issue #${issueNumber} has no PR-applicable labels to copy.`);
               return;
             }
 

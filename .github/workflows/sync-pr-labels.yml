@@ -19,7 +19,10 @@ jobs:
           script: |
             const pullRequest = context.payload.pull_request;
             const body = pullRequest.body || "";
-            const match = body.match(/\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\b/i);
+            const match = body
+              .split(/\r?\n/)
+              .map((line) => line.match(/^\s*(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\s*$/i))
+              .find(Boolean);
 
             if (!match) {
               core.info("No closing issue reference found in PR body. Nothing to sync.");

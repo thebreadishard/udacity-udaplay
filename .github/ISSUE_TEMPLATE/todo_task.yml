@@ -1,0 +1,92 @@
+name: UdaPlay TODO task
+description: Track one scoped implementation task for the UdaPlay project.
+title: "[TODO] "
+labels:
+  - todo
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for one focused task that GitHub Copilot coding agent can pick up in a pull request.
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should be true when this issue is complete?
+      placeholder: Update the notebook so...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Include nearby code, current TODO text, or relevant project behavior.
+      placeholder: The current notebook cell says...
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Files
+      description: List the files expected to change.
+      placeholder: |
+        - Udaplay_01_starter_project.ipynb
+        - .env.example only if needed
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Note any issues or PRs that should land first.
+      placeholder: Depends on #...
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Requirements
+      description: Concrete implementation requirements.
+      placeholder: |
+        - Replace the TODO with working code.
+        - Keep the change narrowly scoped.
+        - Do not commit .env, .venv/, chromadb/, API keys, or notebook outputs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Specific checks that must be true before this issue is closed.
+      placeholder: |
+        - Running the relevant notebook cell succeeds.
+        - The specific TODO for this task is removed or replaced.
+        - Remaining TODO text refers only to later tasks.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation
+      description: Commands, notebook cells, or manual checks reviewers should run.
+      placeholder: |
+        From the repository root, run...
+    validations:
+      required: true
+
+  - type: textarea
+    id: pr-requirements
+    attributes:
+      label: PR Requirements
+      value: |
+        - Open a pull request that includes `Closes #ISSUE_NUMBER` in the PR description.
+        - Keep the PR narrowly scoped to this issue.
+        - Apply the same labels to the PR where possible.
+        - Do not commit `.env`, `.venv/`, `chromadb/`, API keys, or notebook outputs unless intentionally required for review.
+    validations:
+      required: true

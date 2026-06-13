@@ -1,0 +1,7 @@
+chromadb
+openai
+pdfplumber
+pydantic
+python-dotenv
+tavily-python
+typing-extensions

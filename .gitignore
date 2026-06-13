@@ -1,0 +1,40 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Distribution and build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test, coverage, and type-check caches
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+config.env
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

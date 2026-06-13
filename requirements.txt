@@ -4,5 +4,6 @@ openai
 pdfplumber
 pydantic
 python-dotenv
+streamlit
 tavily-python
 typing-extensions

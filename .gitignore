@@ -12,6 +12,9 @@ ENV/
 # Jupyter
 .ipynb_checkpoints/
 
+# Local vector database output
+chromadb/
+
 # Distribution and build artifacts
 build/
 dist/
@@ -31,7 +34,6 @@ htmlcov/
 .env
 .env.*
 !.env.example
-config.env
 
 # IDE and OS files
 .vscode/
